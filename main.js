@@ -1,33 +1,28 @@
 document.getElementById("saveContactBtn").addEventListener("click", addContact);
 
-let filterInput = document.getElementById('filterInput');
+
+let filterInput = document.getElementById('searchName');
 filterInput.addEventListener('keyup', filterNames);
 
 function filterNames(){
 	filterInputValue = filterInput.value;
 	let ulElem = document.getElementById('names');
-	let liElem = ul.querySelectorAll('li.collection-item');
+	let liElem = ulElem.querySelectorAll('li.collection-item');
+	for (let i=0; i< liElem.length; i++){
+		let ancEl = liElem[i].getElementsByTagName("a")[0];
+		console.log(ancEL.innerText);
+	}
 
 }
 
 function checkAndCreateLocalStorageData(){
 	if (localStorage.getItem("contacts") === null){
 		var theContacts = [
-			{"name": "Barry", 	"cell": "127343"},
-			{"name": "Andy", 		"cell": "123123"},
-			{"name": "Cinnamon","cell": "123145"},
-			{"name": "Abraham", "cell": "123346"},
-			{"name": "Cindy", 	"cell": "123168"},
-			{"name": "Apollo", 	"cell": "143523"},
-			{"name": "Ben", 		"cell": "126903"},
-			{"name": "Arnold", 	"cell": "124253"},
-			{"name": "Bud", 		"cell": "134063"},
-			{"name": "Colin", 	"cell": "123491"},
-			{"name": "Bill", 		"cell": "157323"},
-			{"name": "Adam", "cell": "123194"},
-			{"name": "Cedrick", "cell": "123194"},
-			{"name": "Alex", "cell": "123194"},
-			{"name": "Bulan", "cell": "123194"},
+			{"name": "Barry", 	"cell": "127343"},{"name": "Andy", 		"cell": "123123"},{"name": "Cinnamon","cell": "123145"},
+			{"name": "Abraham", "cell": "123346"},{"name": "Cindy", 	"cell": "123168"},{"name": "Apollo", 	"cell": "143523"},
+			{"name": "Ben", 		"cell": "126903"},{"name": "Arnold", 	"cell": "124253"},{"name": "Bud", 		"cell": "134063"},
+			{"name": "Colin", 	"cell": "123491"},{"name": "Bill", 		"cell": "157323"},{"name": "Adam", "cell": "123194"},
+			{"name": "Cedrick", "cell": "123194"},{"name": "Alex", "cell": "123194"},{"name": "Bulan", "cell": "123194"},
 			{"name": "Atom", "cell": "123194"},
 
 		];
@@ -60,16 +55,15 @@ function fetchLocalStorageData(){
 
 function populateDiv(){
 
-	lsContactsData = fetchLocalStorageData();
+
+	var lsContactsData = fetchLocalStorageData();
 
 	outputDiv = document.getElementById('contactsDiv');
 	childUL = document.getElementById("lsContactNames");
 	childUL.innerHTML = "";
 
 	var newCharLiElem = document.createElement("li");
-	var strContent  = `${lsContactsData[0].name.charAt(0)}`
-// 	var elemContent = document.createTextNode(strContent);
-// 	newCharLiElem.appendChild(elemContent);
+	var strContent  = `${lsContactsData[0].name.charAt(0)}`;
 	newCharLiElem.innerHTML = `<h5>${strContent}</h5>`;
 	newCharLiElem.setAttribute("class", 'collection-header');
 	childUL.appendChild(newCharLiElem);
@@ -77,11 +71,40 @@ function populateDiv(){
 
 	for (var i=0; i<lsContactsData.length; i++){
 
-		liElemStr = `${lsContactsData[i].name} - ${lsContactsData[i].cell}`;
+		var newAncTagElem = document.createElement("a");
+		newAncTagElem.setAttribute("href", "#");
+		var ancTagVal = document.createTextNode(`${lsContactsData[i].name}`);
+		newAncTagElem.appendChild(ancTagVal);
+
+		newAncTagElem.addEventListener("click", function(event){
+			event.preventDefault();
+			console.log(this.innerHTML, this.nextSibling.innerText);
+		});
+
+
+		var newSpanElem = document.createElement("span");
+		var cellNo = `${lsContactsData[i].cell}`;
+		var spanContent = document.createTextNode(cellNo);
+		newSpanElem.appendChild(spanContent);
+		newSpanElem.id = `cellSpan-${i+1}`;
+		newSpanElem.classList.add("right");
+		newSpanElem.classList.add("hide");
+
 
 		var newContactLiElem = document.createElement("li");
-		var liElemContent = document.createTextNode(liElemStr);
-		newContactLiElem.appendChild(liElemContent);
+
+		newContactLiElem.appendChild(newAncTagElem);
+		newContactLiElem.appendChild(newSpanElem);
+
+
+		newContactLiElem.addEventListener("click", function(){
+			this.children[1].classList.remove("hide");
+			var detailsDiv = document.getElementById("detailsDiv");
+			var name = this.children[0].innerText;
+			var cellNo = this.children[1].innerText;
+			detailsDiv.innerHTML= `<h4>${name}</h4> <p>${cellNo}</p>`;
+		});
+
 		newContactLiElem.setAttribute("class", "collection-item");
 		childUL.appendChild(newContactLiElem);
 
@@ -103,10 +126,10 @@ function populateDiv(){
 
 function addContact(e){
 	e.preventDefault();
-	var contactName= document.getElementById('createForm').newContactName.value;
-	var contactCell= document.getElementById('createForm').newContactCell.value;
+	var contactNameVal= document.getElementById('createForm').newContactName.value;
+	var contactCellVal= document.getElementById('createForm').newContactCell.value;
 
-	if (!contactName || !contactCell){
+	if (!contactNameVal || !contactCellVal){
 		document.getElementById('createFormErrors').innerHTML = "<p class='center-align'> Please Fill in values correctly </p>";
 	return ;
 	}
@@ -117,8 +140,10 @@ function addContact(e){
 	currentContacts.push(newContact);
 	currentContacts = JSON.stringify(currentContacts);
 	localStorage.setItem("contacts", currentContacts);
-	contactName.value = "";
-	contactCell.value = "";
+	document.getElementById('createForm').newContactName.value = "";
+	document.getElementById('createForm').newContactCell.value = "";
 	populateDiv();
 
 }
+
+populateDiv();
