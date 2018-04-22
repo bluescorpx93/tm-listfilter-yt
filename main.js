@@ -5,14 +5,18 @@ let filterInput = document.getElementById('searchName');
 filterInput.addEventListener('keyup', filterNames);
 
 function filterNames(){
-	filterInputValue = filterInput.value;
-	let ulElem = document.getElementById('names');
+	filterInputValue = filterInput.value.toUpperCase();
+	let ulElem = document.getElementById('lsContactNames');
 	let liElem = ulElem.querySelectorAll('li.collection-item');
-	for (let i=0; i< liElem.length; i++){
-		let ancEl = liElem[i].getElementsByTagName("a")[0];
-		console.log(ancEL.innerText);
-	}
 
+	for (let i=0; i< liElem.length; i++){
+		let ancElVal = liElem[i].getElementsByTagName("a")[0].innerHTML.toUpperCase();
+		if(ancElVal.indexOf(filterInputValue) != -1){
+			liElem[i].style.display = "";
+		} else {
+			liElem[i].style.display = "none";
+		}
+	}
 }
 
 function checkAndCreateLocalStorageData(){
@@ -146,4 +150,3 @@ function addContact(e){
 
 }
 
-populateDiv();
