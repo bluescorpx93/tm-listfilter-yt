@@ -57,9 +57,9 @@ function fetchLocalStorageData(){
 	return data;
 }
 
+
+
 function populateDiv(){
-
-
 	var lsContactsData = fetchLocalStorageData();
 
 	outputDiv = document.getElementById('contactsDiv');
